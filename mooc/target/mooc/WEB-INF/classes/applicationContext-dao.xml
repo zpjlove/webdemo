@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 数据库连接池 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+<!--        <property name="url" value="jdbc:mysql://127.0.0.1:3306/books?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC"/>-->
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <!-- 连接池的最大数据库连接数 -->
+        <property name="maxActive" value="${jdbc.maxActive}" />
+        <!-- 最大空闲数 -->
+        <property name="maxIdle" value="${jdbc.maxIdle}" />
+    </bean>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 加载mybatis核心配置文件 -->
+        <property name="configLocation" value="classpath:sqlMapConfig.xml" />
+        <!-- 别名包扫描 -->
+        <property name="typeAliasesPackage" value="com.mooc.pojo" />
+<!--        <property name="mapperLocations" value="classpath:com/mooc/mapper/BooksMapper.xml"></property>-->
+    </bean>
+    <!-- 动态代理，第二种方式：包扫描（推荐）： -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- basePackage多个包用","分隔 -->
+        <property name="basePackage" value="com.mooc.mapper,com.mooc.controller" />
+    </bean>
+
+</beans>
